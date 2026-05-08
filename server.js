@@ -27,9 +27,14 @@ const blogRoutes = require('./routes/blogRoutes');
 app.use('/api/blogs', blogRoutes);
 
 // Serve static files from uploads directory
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir);
+const isVercel = process.env.VERCEL === '1' || process.env.VERCEL;
+const uploadsDir = isVercel ? '/tmp' : path.join(__dirname, 'uploads');
+try {
+    if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir);
+    }
+} catch (e) {
+    console.warn('Could not create uploads directory:', e.message);
 }
 app.use('/uploads', express.static(uploadsDir));
 

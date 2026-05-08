@@ -6,9 +6,10 @@ const db = require('../config/db');
 const router = express.Router();
 
 // Multer config for image uploads
+const isVercel = process.env.VERCEL === '1' || process.env.VERCEL;
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/');
+        cb(null, isVercel ? '/tmp' : 'uploads/');
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
